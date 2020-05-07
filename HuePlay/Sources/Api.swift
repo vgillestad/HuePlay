@@ -11,30 +11,33 @@ import Foundation
 enum ColorMode {
     case ct(Int)
     case xy([Double])
+    case hs(hue:Int,sat:Int)
 }
 
 struct TibberGW {
     
-    private static let token:String = "INSERT_TOKEN"
-    private static let homeId:String = "INSERT_HOMEID"
-    private static let groupId:String = "INSERT_GROUPID"
-    private static let lightId:String = "INSERT_LIGHTID"
+    private static let TOKEN:String = ""
+    private static let HOME_ID:String = ""
+    private static let GROUP_ID:String = ""
+    private static let LIGHT_ID:String = ""
     
     static func sendColor(colorMode:ColorMode, brightness:Int) {
-        var lightStateAsText = ""
+        var lightState = ""
 
         switch colorMode {
         case .ct(let m):
-            lightStateAsText = "{on:true, bri: \(brightness), ct:\(m)}"
+            lightState = "{on:true, bri: \(brightness), ct:\(m)}"
         case .xy(let arr):
-            lightStateAsText = "{on:true, bri: \(brightness), xy:[\(arr.map{"\($0)"}.joined(separator: ","))]}"
+            lightState = "{on:true, bri: \(brightness), xy:[\(arr.map{"\($0)"}.joined(separator: ","))]}"
+        case .hs(let hue, let sat):
+            lightState = "{on:true, bri: \(brightness), hue:\(hue), sat:\(sat)}"
         }
         
         let mutation = """
         mutation {
           me {
-            home(id: "\(homeId)") {
-              setLightsState(groupId: "\(groupId)", lights: [{id: "\(lightId)", state: \(lightStateAsText)}]) {
+            home(id: "\(HOME_ID)") {
+              setLightsState(groupId: "\(GROUP_ID)", lights: [{id: "\(LIGHT_ID)", state: \(lightState)}]) {
                 error {
                   statusCode
                   title
@@ -46,12 +49,12 @@ struct TibberGW {
         }
         """
         
-        print("REQUEST: \(lightStateAsText)")
+        print("REQUEST: \(lightState)")
         
         var request = URLRequest(url: URL(string: "https://app.tibber.com/v4/gql")!)
         request.httpMethod = "POST"
         request.httpBody = try? JSONSerialization.data(withJSONObject: ["query":mutation], options: [])
-        request.setValue(token, forHTTPHeaderField: "Authorization")
+        request.setValue(TOKEN, forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
