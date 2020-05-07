@@ -26,11 +26,12 @@ struct TibberGW {
 
         switch colorMode {
         case .ct(let m):
-            lightState = "{on:true, bri: \(brightness), ct:\(m)}"
+            lightState = "{on:true, brightness: \(brightness), ct:\(m)}"
         case .xy(let arr):
-            lightState = "{on:true, bri: \(brightness), xy:[\(arr.map{"\($0)"}.joined(separator: ","))]}"
+            lightState = "{on:true, brightness: \(brightness), xy:[\(arr.map{"\($0)"}.joined(separator: ","))]}"
         case .hs(let hue, let sat):
-            lightState = "{on:true, bri: \(brightness), hue:\(hue), sat:\(sat)}"
+            lightState = "{on:true, brightness: \(brightness), hue:\(hue), sat:\(sat)}"
+            fatalError("not supported")
         }
         
         let mutation = """
