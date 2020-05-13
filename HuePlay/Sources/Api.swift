@@ -17,9 +17,8 @@ enum ColorMode {
 struct TibberGW {
     
     private static let TOKEN:String = ""
-    private static let HOME_ID:String = ""
-    private static let GROUP_ID:String = ""
-    private static let LIGHT_ID:String = ""
+    private static let HOME_ID:String = "42fbc40d-9553-47e0-bd7c-a54a2d5317e3"
+    private static let LIGHT_ID:String = "hue device#a6b3d7e3-348d-43d0-8080-05770b7f3826#1"
     
     static func sendColor(colorMode:ColorMode, brightness:Int) {
         var lightState = ""
@@ -38,7 +37,7 @@ struct TibberGW {
         mutation {
           me {
             home(id: "\(HOME_ID)") {
-              setLightsState(groupId: "\(GROUP_ID)", lights: [{id: "\(LIGHT_ID)", state: \(lightState)}]) {
+              setLightsState(lights: [{id: "\(LIGHT_ID)", state: \(lightState)}]) {
                 error {
                   statusCode
                   title
