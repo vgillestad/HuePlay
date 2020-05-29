@@ -78,11 +78,10 @@ class ViewController: UIViewController {
     
     @objc func didChangeColorTemperature() {
         let kelvin = colorTemperatureSlider.value
-        let mirek = Int(round(1000000/kelvin))
         colorTemperatureBackground.backgroundColor = UIColor(temperature: CGFloat(kelvin))
-        colorTemperatureLabel.text = "ct: \(mirek) (kelvin: \(Int(kelvin)))"
+        colorTemperatureLabel.text = "kelvin: \(Int(kelvin))"
         
-        currentMode = .ct(mirek)
+        currentMode = .ct(Int(kelvin))
         sendToGw()
     }
     
@@ -103,11 +102,11 @@ class ViewController: UIViewController {
 extension ViewController : ColorWheelDelegate {
     func hueAndSaturationSelected(_ hue: CGFloat, saturation: CGFloat) {
         let color = UIColor(hue: hue, saturation: saturation, brightness: 1, alpha: 1)
-        let point = HueUtilities.calculateXY(color, forModel: model)
-        xyLabel.text = "xy: [\(point.x.fourDecimals),\(point.y.fourDecimals)]"
+//        let point = HueUtilities.calculateXY(color, forModel: model)
+//        xyLabel.text = "xy: [\(point.x.fourDecimals),\(point.y.fourDecimals)]"
         xySelectedColor.backgroundColor = color
         
-        currentMode = .xy([Double(point.x), Double(point.y)])
+        currentMode = .xy(color)
         sendToGw()
     }
 }
@@ -133,5 +132,17 @@ extension UIColor {
         var a: CGFloat = 0
         self.getRed(&r, green: &g, blue: &b, alpha: &a)
         return (r, g, b, a)
+    }
+    func toHexString() -> String {
+        var r:CGFloat = 0
+        var g:CGFloat = 0
+        var b:CGFloat = 0
+        var a:CGFloat = 0
+        
+        getRed(&r, green: &g, blue: &b, alpha: &a)
+        
+        let rgb:Int = (Int)(r*255)<<16 | (Int)(g*255)<<8 | (Int)(b*255)<<0
+        
+        return NSString(format:"#%06x", rgb) as String
     }
 }
